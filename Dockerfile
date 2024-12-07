@@ -16,3 +16,4 @@ EXPOSE 80
 FROM devopsedu/webapp
 COPY . /var/www/html/
 CMD ["apache2ctl", "-D", "FOREGROUND"]
+
