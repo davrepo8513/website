@@ -60,7 +60,7 @@ echo "<!DOCTYPE html>
         </p>
     </div>
     <div class='footer'>
-        <p>Created by Your Name - 2024</p>
+        <p>Created by Divyamohan Tyagi - 2024</p>
     </div>
 </body>
 </html>";
