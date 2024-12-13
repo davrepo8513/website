@@ -1,48 +1,63 @@
----
-- name: Install Docker
+# ---
+# - name: Install Docker
+#   hosts: all
+#   become: yes
+#   vars:
+#     ansible_ssh_private_key_file: /home/dmtavs/.ssh/id_rsa
+#   tasks:
+#     - name: Update package index (RedHat-based)
+#       ansible.builtin.dnf:
+#         name: "*"
+#         state: latest
+#       when: ansible_os_family == "RedHat"
+
+#     - name: Install prerequisites (RedHat-based)
+#       ansible.builtin.dnf:
+#         name:
+#           - dnf-utils
+#           - device-mapper-persistent-data
+#           - lvm2
+#         state: present
+#       when: ansible_os_family == "RedHat"
+
+#     - name: Create Docker repository file for Fedora
+#       ansible.builtin.copy:
+#         dest: /etc/yum.repos.d/docker.repo
+#         content: |
+#           [docker-ce]
+#           name=Docker CE Stable Repository
+#           baseurl=https://download.docker.com/linux/fedora/$releasever/stable
+#           enabled=1
+#           gpgcheck=1
+#           gpgkey=https://download.docker.com/linux/ubuntu/gpg
+#       when: ansible_os_family == "RedHat" and ansible_distribution == "Fedora"
+
+#     - name: Install Docker CE on Fedora
+#       ansible.builtin.dnf:
+#         name:
+#           - docker-ce
+#           - docker-ce-cli
+#           - containerd.io
+#         state: present
+#       when: ansible_os_family == "RedHat" and ansible_distribution == "Fedora"
+
+#     - name: Ensure Docker service is running
+#       ansible.builtin.service:
+#         name: docker
+#         state: started
+#         enabled: yes
+
+- name: Install Docker on target
   hosts: all
-  become: true
-  vars:
-    ansible_ssh_private_key_file: /home/dmtavs/.ssh/id_rsa
+  become: yes
   tasks:
-    - name: Update package index (RedHat-based)
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
-      when: ansible_os_family == "RedHat"
-
-    - name: Install prerequisites (RedHat-based)
-      ansible.builtin.dnf:
-        name:
-          - dnf-utils
-          - device-mapper-persistent-data
-          - lvm2
+    - name: Install Docker
+      dnf:
+        name: docker
         state: present
-      when: ansible_os_family == "RedHat"
 
-    - name: Create Docker repository file for Fedora
-      ansible.builtin.copy:
-        dest: /etc/yum.repos.d/docker.repo
-        content: |
-          [docker-ce]
-          name=Docker CE Stable Repository
-          baseurl=https://download.docker.com/linux/fedora/$releasever/stable
-          enabled=1
-          gpgcheck=1
-          gpgkey=https://download.docker.com/linux/ubuntu/gpg
-      when: ansible_os_family == "RedHat" and ansible_distribution == "Fedora"
-
-    - name: Install Docker CE on Fedora
-      ansible.builtin.dnf:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
-      when: ansible_os_family == "RedHat" and ansible_distribution == "Fedora"
-
-    - name: Ensure Docker service is running
-      ansible.builtin.service:
+    - name: Start and enable Docker service
+      systemd:
         name: docker
         state: started
-        enabled: yes
+        enabled: true
